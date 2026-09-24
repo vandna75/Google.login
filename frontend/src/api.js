@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
+  baseURL: import.meta.env.VITE_API_URL || "https://google-login-5ask.onrender.com",
 });
 
 // Har request ke saath agar token localStorage me hai to automatically bhej do
