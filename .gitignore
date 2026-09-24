@@ -3,3 +3,6 @@ node_modules/
 dist/
 backend/config/serviceAccountKey.json
 .DS_Store
+
+# Local Netlify folder
+.netlify
