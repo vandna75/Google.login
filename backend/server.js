@@ -10,19 +10,41 @@ dotenv.config();
 
 const app = express();
 
+// 1. Helmet configuration (Cross-Origin Policy Fix for Google Auth)
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+    crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" }
+  })
+);
 
-app.use(helmet());
+// 2. Allowed origins list
+const allowedOrigins = [
+  "https://loginsingup-pages.netlify.app",
+  "http://localhost:5173",
+  process.env.CLIENT_URL
+].filter(Boolean);
 
+// 3. CORS configuration
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("CORS policy violation: " + origin));
+      }
+    },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
   })
 );
 
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minute
-  max: 200, // all IP se max 200 requests / 15 min
+  windowMs: 15 * 60 * 1000,
+  max: 200,
   message: { message: "Bahut zyada requests bhej di, thodi der baad try karo." },
 });
 app.use(limiter);
